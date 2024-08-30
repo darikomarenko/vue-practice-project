@@ -1,47 +1,105 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <input type="text" v-model="userName" placeholder="Name">
+  <input type="password" v-model="userPass" placeholder="Password">
+  <input type="email" v-model="userEmail" placeholder="Email">
+  <p className="error"> {{ error }}</p>
+  <button @click="sendData()">
+    Send
+  </button>
+  <div v-if="users.length === 0" className="user">
+    No users
+  </div>
+  <div v-else-if="users.length == 1" className="user">
+    One user
+  </div>
+  <div v-else className="user">
+    Users has more than 1 element
+  </div>
+  <User v-for="(el, index) in users" :key="index" :user="el" :index="index" :deleteUser></User>
 </template>
 
+
+<script>
+import User from './components/User.vue';
+
+export default {
+  components: { User },
+  data() {
+    return {
+      users: [],
+      error: '',
+      userName: '',
+      userPass: '',
+      userEmail: ''
+    }
+  },
+  methods: {
+    sendData() {
+      if(this.userName == '') {
+        this.error = 'No name entered';
+        return;
+      } else if(this.userPass == '') {
+        this.error = 'No pass entered';
+        return;
+      } else if(this.userEmail == '') {
+        this.error = 'No email entered';
+        return;
+      }
+      this.error = '';
+      this.users.push({
+        name: this.userName,
+        pass: this.userPass,
+        email: this.userEmail
+      })
+    },
+    deleteUser(index) {
+      this.users.splice(index, 1)
+    }
+}
+}
+</script>
+
 <style scoped>
-header {
-  line-height: 1.5;
+h3 {
+  font-weight: lighter;
+}
+p {
+  color: green;
 }
 
-.logo {
+input {
   display: block;
-  margin: 0 auto 2rem;
+  margin-bottom: 10px;
+  border-radius: 3px;
+  border: 1px solid silver;
+  outline: none;
+  padding: 10px 15px;
+  background: #fafafa;
+  color: #333;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+button {
+    border: 0;
+    border-radius: 5px;
+    outline: none;
+    padding: 10px 15px;
+    background: #6cd670;
+    color: #167f3d;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 500ms ease;
 }
+
+button:hover {
+    transform: translateY(-5px);
+}
+
+.user {
+  width: 90%;
+  margin-top: 20px;
+  border: 1px solid silver;
+  color: #222;
+  padding: 20px;
+  border-radius: 5px;
+  }
 </style>
